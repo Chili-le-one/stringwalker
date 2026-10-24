@@ -5,15 +5,7 @@
 
 <!DOCTYPE html>
 <html lang="fr">
-<head><!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-F4CHETNFNC"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-F4CHETNFNC');
-</script>
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0e0f12">
@@ -92,6 +84,8 @@ nav button.on{color:var(--accent);border-bottom-color:var(--accent)}
 #upd .x2{position:absolute;top:6px;right:10px;background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer}
 #instBar{display:none;align-items:center;justify-content:space-between;gap:10px;border:1px solid var(--line);background:var(--card);border-radius:6px;padding:8px 12px;margin-bottom:12px;font-size:.8rem;color:var(--muted)}
 .logo{width:36px;height:36px;border-radius:9px;vertical-align:middle;margin-right:10px;position:relative;top:-2px}
+.fq button{padding:13px 0}
+#fQuick{display:flex;flex-direction:column;gap:8px}
 </style>
 </head>
 <body>
@@ -132,6 +126,7 @@ nav button.on{color:var(--accent);border-bottom-color:var(--accent)}
 <div id="v-calib" class="view">
   <div class="card">
     <h2>Ajustement terrain</h2>
+    <div class="help">Affinez une distance à partir du calcul de l’appli : indiquez où vont vos flèches ou décalez d’un pas, puis enregistrez. Cela met à jour la mesure de cette distance.</div>
     <div class="fg"><label>Distance de tir (m)</label><input type="number" id="cDist" step="any" inputmode="decimal" placeholder="ex : 30" oninput="calibInit()"></div>
     <div class="fg"><label>Valeur théorique</label><div id="cTheo" style="font-family:var(--serif);color:var(--accent);font-size:1.1rem">— mm</div></div>
     <div class="fg"><label>Où vont les flèches ?</label>
@@ -150,6 +145,7 @@ nav button.on{color:var(--accent);border-bottom-color:var(--accent)}
 
 <div id="v-meas" class="view">
   <div class="card"><h2>Nouvelle mesure</h2>
+    <div class="help">Saisissez ici une position que vous connaissez pour une distance (par exemple réglée et validée au tir). Ces mesures sont la base de la courbe.</div>
     <form onsubmit="saveMeas(event)">
       <div class="row">
         <div class="fg"><label>Distance (m)</label><input type="number" id="mDist" step="any" inputmode="decimal" required></div>
@@ -167,9 +163,10 @@ nav button.on{color:var(--accent);border-bottom-color:var(--accent)}
   </div>
   <div class="card"><h2>Mesures du profil</h2>
     <table><thead><tr><th>Dist.</th><th>Repère</th><th>Position</th><th>Écart</th><th></th></tr></thead><tbody id="mBody"></tbody></table>
-    <button class="btn sec" onclick="exportCSV()">Copier en CSV</button>
-    <button class="btn sec" onclick="exportJSON()">Sauvegarder (JSON)</button>
-    <button class="btn sec" onclick="importJSON()">Restaurer (JSON)</button>
+    <button class="btn sec" onclick="exportCSV()">Télécharger en CSV</button>
+    <button class="btn sec" onclick="exportJSON()">Sauvegarder (fichier)</button>
+    <button class="btn sec" onclick="$('impFile').click()">Restaurer (fichier)</button>
+    <input type="file" id="impFile" accept=".json,application/json" hidden onchange="importFile(this)">
   </div>
 </div>
 
@@ -177,6 +174,7 @@ nav button.on{color:var(--accent);border-bottom-color:var(--accent)}
   <div class="card"><h2>Palette — aperçu des distances</h2>
     <div class="fg"><label>Afficher</label><select id="ovAll" onchange="drawOverview()"><option value="meas">Mes distances mesurées</option><option value="all">Toutes les 5 m</option></select></div>
     <svg id="palOv" class="pal" viewBox="0 0 300 480" aria-label="Distances sur la palette"></svg>
+    <button class="btn sec" style="margin-top:12px" onclick="exportOverviewPNG()">Exporter en image (PNG)</button>
     <div class="help" style="margin:14px 0 0">Le repère (couture) est en gros, la position en mm en petit. Aperçu à plat, sans pente.</div>
   </div>
 </div>
@@ -216,11 +214,12 @@ nav button.on{color:var(--accent);border-bottom-color:var(--accent)}
 <div id="field">
   <div style="display:flex;justify-content:space-between;align-items:center"><span id="fProf" style="font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em"></span><button class="btn sec" style="width:auto;margin:0;padding:8px 16px" onclick="closeField()">Fermer</button></div>
   <div><label style="text-align:center">Distance (m)</label><div id="fDist" class="fbig" style="font-size:4rem">—</div></div>
-  <div class="fbtns"><button onclick="fAdd(-1)">−1</button><button onclick="fAdd(-.5)">−0,5</button><button onclick="fAdd(.5)">+0,5</button><button onclick="fAdd(1)">+1</button></div>
+  <div id="fQuick"><div class="fbtns fq"><button data-d="5" onclick="fSet(5)">5</button><button data-d="10" onclick="fSet(10)">10</button><button data-d="15" onclick="fSet(15)">15</button><button data-d="20" onclick="fSet(20)">20</button></div><div class="fbtns fq"><button data-d="25" onclick="fSet(25)">25</button><button data-d="30" onclick="fSet(30)">30</button><button data-d="35" onclick="fSet(35)">35</button><button data-d="40" onclick="fSet(40)">40</button></div></div>
+  <div class="fbtns"><button onclick="fAdd(-1)">− 1 m</button><button onclick="fAdd(1)">+ 1 m</button></div>
   <div class="fbtns"><button id="fUp" onclick="setDir('up')">Montée</button><button id="fDn" onclick="setDir('down')">Descente</button></div>
   <div style="display:flex;align-items:center;gap:10px"><label style="margin:0;flex:none">Pente</label><div class="fbtns" style="flex:1"><button onclick="fSl(-1)">Moins</button><div id="fSlope" class="fbig" style="flex:2;font-size:1.1rem;align-self:center">Plat</div><button onclick="fSl(1)">Plus</button></div></div>
   <div class="result" style="margin:0"><div id="fMk" class="fbig" style="font-size:3rem;color:var(--accent)"></div><div id="fMm" class="fbig" style="font-size:1.2rem;color:var(--muted);margin-top:10px"></div><div id="fInfo" class="d"></div></div>
-  <svg id="palField" class="pal" viewBox="0 0 300 250" style="max-height:30vh"></svg>
+  <svg id="palField" class="pal" viewBox="0 0 300 250" style="max-height:22vh"></svg>
 </div>
 <div id="ob" class="ob"></div><div id="lg" class="ob lg"></div><div id="upd"></div>
 <nav>
@@ -471,20 +470,57 @@ function copy(t,msg){
   const fb=()=>{const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');toast(msg)}catch(e){toast('Copie impossible')}a.remove()};
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(()=>toast(msg),fb);else fb();
 }
+const today=()=>new Date().toISOString().slice(0,10);
+function dlBlob(name,blob){
+  const u=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);
+}
+function dl(name,text,type){dlBlob(name,new Blob([text],{type:type||'application/json'}))}
 function exportCSV(){
   const M=P().measures.slice().sort((a,b)=>a.dist-b.dist);
-  copy(['profil;distance_m;position_mm;repere'].concat(M.map(m=>P().name+';'+m.dist+';'+m.mm+';'+cNum(m.mm))).join('\n'),'CSV copié');
+  const rows=['profil;distance_m;position_mm;repere'].concat(M.map(m=>P().name+';'+m.dist+';'+m.mm+';'+cNum(m.mm)));
+  dl('stringwalker-mesures-'+today()+'.csv','\ufeff'+rows.join('\r\n'),'text/csv');toast(tx('dlok'));
 }
-function exportJSON(){copy(JSON.stringify(S),'Sauvegarde copiée')}
-function importJSON(){
-  const s=prompt('Collez la sauvegarde JSON :');if(!s)return;
-  try{
-    const o=JSON.parse(s);
-    if(Array.isArray(o.profiles)&&o.profiles.length){S={profiles:o.profiles,active:o.active||o.profiles[0].id}}
-    else if(Array.isArray(o.measures)){const p=newP('Importé');Object.assign(p,o.config||{});p.measures=o.measures.map(m=>({id:uid(),dist:+m.dist,mm:+m.mm}));S.profiles.push(p);S.active=p.id}
-    else throw 0;
-    save();refresh();toast('Sauvegarde restaurée');
-  }catch(e){toast('JSON invalide')}
+function exportJSON(){
+  dl('stringwalker-sauvegarde-'+today()+'.json',JSON.stringify(Object.assign({app:'stringwalker',savedWith:INFO.version,date:today()},S),null,1));toast(tx('dlok'));
+}
+function importFile(inp){
+  const f=inp.files&&inp.files[0];inp.value='';if(!f)return;
+  const rd=new FileReader();
+  rd.onload=()=>{
+    try{
+      const o=JSON.parse(rd.result);let ps;
+      if(Array.isArray(o.profiles)&&o.profiles.length)ps=o.profiles;
+      else if(Array.isArray(o.measures)){const p=newP('Importé');Object.assign(p,o.config||{});p.measures=o.measures;ps=[p]}
+      else throw 0;
+      ps=ps.map(p=>Object.assign(newP(p.name||'Profil'),p,{id:String(p.id||uid()),measures:(Array.isArray(p.measures)?p.measures:[]).map(m=>({id:String(m.id||uid()),dist:+m.dist,mm:Math.round(+m.mm)})).filter(m=>isFinite(m.dist)&&isFinite(m.mm))}));
+      const nm=ps.reduce((n,p)=>n+p.measures.length,0);
+      if(!confirm(tx('impq').replace('{p}',ps.length).replace('{m}',nm)))return;
+      S={profiles:ps,active:ps.some(p=>p.id===o.active)?o.active:ps[0].id,polyMig:1};
+      save();refresh();toast(tx('impok'));
+    }catch(e){toast(tx('impbad'))}
+  };
+  rd.readAsText(f);
+}
+/* Export de l'aperçu des distances en image PNG (fond blanc, lisible à l'impression) */
+const GPAL={'--bg':'#ffffff','--text':'#1d1f23','--muted':'#6f7178','--accent':'#7d6a45','--line':'#d8d4ca','--surface':'#f3f1ec','--warn':'#b45309','--gap':'#c2410c','--ok':'#3f7d5a','--card':'#ffffff'};
+function ovSVG(){
+  const svg=$('palOv');if(!svg||!svg.firstChild)return null;
+  const vb=svg.getAttribute('viewBox').split(' ').map(Number),w=vb[2],h=vb[3];
+  const inner=svg.innerHTML.replace(/var\((--[a-z]+)\)/g,(m,k)=>GPAL[k]||'#000');
+  return{w,h,svg:'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w+' '+h+'" width="'+w+'" height="'+h+'"><style>text{font-family:Georgia,\'Times New Roman\',serif;font-size:10px;fill:#6f7178}</style>'+inner+'</svg>'};
+}
+function exportOverviewPNG(){
+  const o=ovSVG();if(!o){toast(tx('nodata'));return}
+  const sc=3,W=o.w*sc,H0=150,Hs=o.h*sc,H=H0+Hs+90,cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const c=cv.getContext('2d');c.fillStyle='#ffffff';c.fillRect(0,0,W,H);
+  c.fillStyle='#1d1f23';c.font='bold 54px Georgia,serif';c.fillText('Stringwalker',40,80);
+  c.fillStyle='#6f7178';c.font='32px Georgia,serif';c.fillText(P().name+' · '+protName()+' · '+today(),40,125);
+  const img=new Image();
+  img.onload=()=>{c.drawImage(img,0,H0,W,Hs);c.fillStyle='#6f7178';c.font='26px Georgia,serif';c.fillText(tx('pngnote'),40,H-40);
+    cv.toBlob(b=>{if(!b){toast(tx('pngfail'));return}dlBlob('stringwalker-distances-'+today()+'.png',b);toast(tx('dlok'))},'image/png')};
+  img.onerror=()=>toast(tx('pngfail'));
+  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(o.svg);
 }
 
 /* Graphique distance → position */
@@ -596,6 +632,7 @@ function closeField(){
   $('calcDist').value=FD;$('calcSlope').value=FS||0;$('calcDir').value=FDr;$('calcH').value='';slopeChips();calculate();chips();
 }
 function fAdd(k){FD=Math.max(0,r2(FD+k));fieldRender()}
+function fSet(d){FD=d;fieldRender()}
 /* Pente par niveaux (angle inconnu en tir nature) */
 const LV=[{a:0,n:'Plat'},{a:10,n:'Faible'},{a:20,n:'Moyenne'},{a:30,n:'Forte'}];
 let FDr='up';
@@ -615,7 +652,7 @@ function fSl(k){const i=Math.max(0,Math.min(LV.length-1,lvIdx(FS)+k));FS=LV[i].a
 function fieldRender(){
   const de=FD*Math.cos(FS*Math.PI/180),e=estimate(de),adj=e?slopeAdjMm(FS,FDr):0;if(adj)e.mm=Math.round(e.mm+adj);
   $('fProf').textContent=P().name;$('fUp').classList.toggle('on',FDr!=='down');$('fDn').classList.toggle('on',FDr==='down');
-  $('fDist').textContent=FD.toFixed(1).replace('.',',');
+  $('fDist').textContent=String(Number.isInteger(FD)?FD:FD.toFixed(1)).replace('.',',');document.querySelectorAll('#fQuick button').forEach(b=>b.classList.toggle('sel',+b.dataset.d===FD));
   $('fSlope').textContent=FS?LV[lvIdx(FS)].n+' · '+FS+'°'+(FDr==='down'?' ↓':' ↑'):'Plat';
   $('fMm').textContent=e?fm(e.mm)+' mm':'Mesures insuffisantes';
   $('fMk').textContent=e?mk(e.mm):'—';
@@ -640,7 +677,7 @@ async function offlineStatus(){
 }
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 /* ===== Version, aide au premier démarrage, mentions, mises à jour ===== */
-const INFO={version:'1.6.0',author:'Chili le one',contact:'',license:'Licence CC BY-NC 4.0 — https://creativecommons.org/licenses/by-nc/4.0/deed.fr',host:'Netlify'};
+const INFO={version:'1.7.0',author:'Chili le one',contact:'',license:'Licence CC BY-NC 4.0 — https://creativecommons.org/licenses/by-nc/4.0/deed.fr',host:'Netlify'};
 const LG=(function(){let l='';try{l=localStorage.getItem('bb_lang')||''}catch(e){}return l||(/^fr/i.test(navigator.language||'fr')?'fr':'en')})();
 const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 const lsSet=(k,v)=>{try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(e){}};
@@ -651,10 +688,10 @@ d:['Cet outil donne des estimations à partir de VOS mesures. Vérifiez toujours
 ack:'J’ai lu et j’accepte ces avertissements',more:'Lire les mentions complètes',next:'Continuer',
 t2:'Votre règle de coutures',b2:'Posez le zéro d’une règle sur le début du fil de la 1ère couture, puis mesurez jusqu’à la dernière. Tout reste modifiable dans Réglages.',
 fName:'Nom du profil',fF:'1ère couture (mm)',fL:'Dernière couture (mm)',fC:'Nombre de coutures',fD:'Sens de comptage',up:'Du bas vers le haut',dn:'Du haut vers le bas',saveNext:'Enregistrer et continuer',skipS:'Passer cette étape',
-t3:'Vos premières mesures',b3:'Entrez la position du pianotage (en mm) qui touche le centre à deux distances éloignées, par exemple une courte et une longue. Vous en ajouterez d’autres ensuite. Les mesures d’exemple du départ seront supprimées.',dist:'Distance (m)',pos:'Position (mm)',mes:'Mesure',errC:'Vérifiez les coutures et leurs positions',errP:'Complétez distance et position, ou laissez vide',errD:'Deux distances différentes sont nécessaires',ready:'Prêt ! Bon tir.',gcard:'Doigts du gant',gh:'Le gant n’a pas de coutures : ce sont vos doigts (1, 2, 3, 4) qui servent de repères. Les doigts n’ont pas tous la même taille : mesurez chacun séparément. Posez le zéro de la règle avant le doigt 1, puis mesurez en mm (nombres entiers) la distance du zéro jusqu’à chaque doigt. Laissez vides les doigts inutilisés, en commençant par le doigt 4.',gdl:'Position du zéro',gdn:'Zéro côté encoche (en haut)',gdu:'Zéro côté opposé (en bas)',gmin:'Renseignez au moins les doigts 1 et 2.',gneed:'Avant de commencer : mesurez la distance de chaque doigt du gant (doigts 1 et 2 au minimum). Les doigts n’ont pas tous la même taille.',gopen:'Ouvrir les réglages',errG:'Mesurez au moins les doigts 1 et 2, du plus proche au plus éloigné du zéro, sans doigt vide entre deux.',adjUpG:'Montée (mm)',adjDnG:'Descente (mm)',adjUpS:'Montée (½ couture)',adjDnS:'Descente (½ couture)',nmS:'− ½ couture',npS:'+ ½ couture',nmG:'− 1 mm',npG:'+ 1 mm',
+t3:'Vos premières mesures',b3:'Entrez la position du pianotage (en mm) qui touche le centre à deux distances éloignées, par exemple une courte et une longue. Vous en ajouterez d’autres ensuite. Les mesures d’exemple du départ seront supprimées.',dist:'Distance (m)',pos:'Position (mm)',mes:'Mesure',errC:'Vérifiez les coutures et leurs positions',errP:'Complétez distance et position, ou laissez vide',errD:'Deux distances différentes sont nécessaires',ready:'Prêt ! Bon tir.',dlok:'Fichier téléchargé',impq:'Restaurer cette sauvegarde ({p} profil(s), {m} mesure(s)) ? Vos données actuelles seront remplacées.',impok:'Sauvegarde restaurée',impbad:'Fichier invalide',nodata:'Rien à exporter',pngnote:'Aperçu à plat, sans pente.',pngfail:'Export impossible',gcard:'Doigts du gant',gh:'Le gant n’a pas de coutures : ce sont vos doigts (1, 2, 3, 4) qui servent de repères. Les doigts n’ont pas tous la même taille : mesurez chacun séparément. Posez le zéro de la règle avant le doigt 1, puis mesurez en mm (nombres entiers) la distance du zéro jusqu’à chaque doigt. Laissez vides les doigts inutilisés, en commençant par le doigt 4.',gdl:'Position du zéro',gdn:'Zéro côté encoche (en haut)',gdu:'Zéro côté opposé (en bas)',gmin:'Renseignez au moins les doigts 1 et 2.',gneed:'Avant de commencer : mesurez la distance de chaque doigt du gant (doigts 1 et 2 au minimum). Les doigts n’ont pas tous la même taille.',gopen:'Ouvrir les réglages',errG:'Mesurez au moins les doigts 1 et 2, du plus proche au plus éloigné du zéro, sans doigt vide entre deux.',adjUpG:'Montée (mm)',adjDnG:'Descente (mm)',adjUpS:'Montée (½ couture)',adjDnS:'Descente (½ couture)',nmS:'− ½ couture',npS:'+ ½ couture',nmG:'− 1 mm',npG:'+ 1 mm',
 gg:[['1. Mesurer vos doigts','Le gant n’a pas de coutures : ce sont vos doigts, numérotés 1, 2, 3, 4, qui servent de repères. Comme ils n’ont pas tous la même taille, mesurez chacun séparément. Avec une règle rigide, posez le zéro (0 mm) avant le doigt 1, puis mesurez, en mm arrondis à l’unité, la distance du zéro jusqu’à chaque doigt. Saisissez-les dans Réglages > Doigts du gant.'],['2. Faire vos mesures de référence','Sur le pas de tir, trouvez la position qui touche le centre à au moins 2 distances éloignées (par exemple 18 m et 30 m), idéalement 3 ou 4. Mesurez cette position en mm (nombre entier) avec le même zéro, ou choisissez le doigt dans la liste, puis saisissez-la dans l’onglet Mesures.'],['3. Utiliser l’appli','Onglet Calcul : tapez la distance ou touchez une puce. Le repère s’affiche en doigt : entre le zéro et le doigt 1, c’est le doigt 1 ; entre le doigt 1 et le doigt 2, c’est le doigt 2 ; et ainsi de suite. La position en mm (nombre entier) s’affiche en petit. L’onglet {P} montre toutes vos distances sur la corde.']],fProt:'Protection des doigts',optTab:'Palette',optGlove:'Gant',guide:'Guide d’utilisation',guideL:'Comment mesurer ?',gt:'Guide d’utilisation',inst:'Installer l’application',instd:'Application installée sur cet appareil',instt:'Installer sur l’écran d’accueil',instbar:'Installez l’appli pour l’utiliser sans réseau.',instbtn:'Installer',
 instA:'Android (Chrome) : touchez le menu ⋮ en haut à droite, puis « Installer l’application » ou « Ajouter à l’écran d’accueil ».',instI:'iPhone / iPad (Safari) : touchez le bouton Partager, puis « Sur l’écran d’accueil ».',instNote:'Si l’option n’apparaît pas, ouvrez d’abord l’adresse de l’appli avec du réseau dans Chrome (Android) ou Safari (iPhone), hors navigation privée.',
-g:[['À quoi ça sert','Le pianotage consiste à déplacer la prise des doigts sur la corde selon la distance de la cible. Vous mesurez votre réglage à quelques distances, et l’appli calcule la position pour toutes les distances entre elles.'],['1. Mesurer vos coutures','Les coutures sont les repères de la corde. Avec une règle rigide, posez le zéro (0 mm) au début du fil de la 1ère couture, puis lisez la distance en mm jusqu’au début du fil de la dernière. Notez aussi leur nombre et le sens de comptage (1ère en bas ou en haut), puis saisissez ces 4 valeurs dans Réglages > Coutures. Les demi-coutures sont calculées pour vous.'],['2. Faire vos mesures de référence','Sur le pas de tir, trouvez la position qui touche le centre à au moins 2 distances éloignées (par exemple 18 m et 30 m), idéalement 3 ou 4 (par exemple 10, 18, 30 et 40 m). Mesurez cette position en mm depuis la 1ère couture, comme pour les coutures, ou choisissez la couture dans la liste, puis saisissez-la dans l’onglet Mesures. Plus vos distances sont éloignées, plus le calcul est fiable.'],['3. Utiliser l’appli','Onglet Calcul : tapez la distance ou touchez une puce. La couture à utiliser s’affiche en grand (« Couture 7,5 » = à mi-chemin entre la 7 et la 8) et la position en mm en petit. La table de tir liste les distances usuelles, et l’onglet {P} montre toutes vos distances sur la corde.'],['4. Affiner sur le terrain','Après quelques flèches, touchez « Ajuster sur le terrain » : indiquez si elles sont trop hautes ou trop basses, ou décalez par demi-couture, puis enregistrez. La mesure est mise à jour et la courbe s’améliore. Un avertissement apparaît dans Mesures si vos points se contredisent.'],['5. Pente','Choisissez le niveau (plat, faible, moyenne, forte) ou saisissez un dénivelé estimé en mètres, puis montée ou descente : la distance utile est raccourcie. Si vos flèches partent plus haut ou plus bas dans un sens, corrigez dans Réglages > Pente : ajustement.'],['6. Mode terrain','Plein écran avec de gros boutons pour changer la distance et la pente d’une main. L’écran reste allumé.'],['7. Profils','Créez un profil par arc ou par jeu de flèches (Réglages). Chaque profil a ses coutures et ses mesures ; changez de profil avec le sélecteur en haut de l’écran.'],['8. Sauvegarde et hors ligne','Sauvegardez vos mesures en JSON (onglet Mesures) : un nettoyage du navigateur peut les effacer. Une fois installée sur l’écran d’accueil, l’appli fonctionne sans réseau.']],
+g:[['À quoi ça sert','Le pianotage consiste à déplacer la prise des doigts sur la corde selon la distance de la cible. Vous mesurez votre réglage à quelques distances, et l’appli calcule la position pour toutes les distances entre elles.'],['1. Mesurer vos coutures','Les coutures sont les repères de la corde. Avec une règle rigide, posez le zéro (0 mm) au début du fil de la 1ère couture, puis lisez la distance en mm jusqu’au début du fil de la dernière. Notez aussi leur nombre et le sens de comptage (1ère en bas ou en haut), puis saisissez ces 4 valeurs dans Réglages > Coutures. Les demi-coutures sont calculées pour vous.'],['2. Faire vos mesures de référence','Sur le pas de tir, trouvez la position qui touche le centre à au moins 2 distances éloignées (par exemple 18 m et 30 m), idéalement 3 ou 4 (par exemple 10, 18, 30 et 40 m). Mesurez cette position en mm depuis la 1ère couture, comme pour les coutures, ou choisissez la couture dans la liste, puis saisissez-la dans l’onglet Mesures. Plus vos distances sont éloignées, plus le calcul est fiable.'],['3. Utiliser l’appli','Onglet Calcul : tapez la distance ou touchez une puce. La couture à utiliser s’affiche en grand (« Couture 7,5 » = à mi-chemin entre la 7 et la 8) et la position en mm en petit. La table de tir liste les distances usuelles, et l’onglet {P} montre toutes vos distances sur la corde.'],['4. Affiner sur le terrain','Après quelques flèches, touchez « Ajuster sur le terrain » : indiquez si elles sont trop hautes ou trop basses, ou décalez par demi-couture, puis enregistrez. La mesure est mise à jour et la courbe s’améliore. Un avertissement apparaît dans Mesures si vos points se contredisent. Différence : Mesures sert à saisir directement une position connue ; Calibrer part du calcul de l’appli et la corrige.'],['5. Pente','Choisissez le niveau (plat, faible, moyenne, forte) ou saisissez un dénivelé estimé en mètres, puis montée ou descente : la distance utile est raccourcie. Si vos flèches partent plus haut ou plus bas dans un sens, corrigez dans Réglages > Pente : ajustement.'],['6. Mode terrain','Plein écran avec de gros boutons pour changer la distance et la pente d’une main. L’écran reste allumé.'],['7. Profils','Créez un profil par arc ou par jeu de flèches (Réglages). Chaque profil a ses coutures et ses mesures ; changez de profil avec le sélecteur en haut de l’écran.'],['8. Sauvegarde et hors ligne','Sauvegardez vos mesures en JSON (onglet Mesures) : un nettoyage du navigateur peut les effacer. Une fois installée sur l’écran d’accueil, l’appli fonctionne sans réseau.']],
 t4:'Bien démarrer',tips:['Calcul : entrez la distance, lisez la couture à régler.','Après chaque tir, utilisez « Ajuster sur le terrain » : la courbe s’affine.','Pente : choisissez le niveau, puis montée ou descente.','Hors ligne : ouvrez l’appli une fois avec du réseau, elle marchera ensuite sans.','Cette aide reste disponible dans Réglages.'],done:'Terminer',
 help:'Aide et informations',ver:'Version',again:'Revoir l’introduction',legal:'Avertissements et mentions légales',check:'Rechercher une mise à jour',newv:'Mise à jour disponible',doupd:'Mettre à jour',later:'Plus tard',updtxt:'La version {n} est disponible (vous avez la {o}). Vos mesures et réglages sont conservés.',uptodate:'Application à jour',upfail:'Vérification impossible (hors ligne ?)',close:'Fermer',
 lt:'Mentions et avertissements',ed:'Éditeur et hébergement',author:'Auteur / éditeur',contact:'Contact',host:'Hébergeur',
@@ -665,10 +702,10 @@ d:['This tool gives estimates based on YOUR measurements. Always check by shooti
 ack:'I have read and accept these warnings',more:'Read the full notice',next:'Continue',
 t2:'Your stitch ruler',b2:'Place the zero of a ruler at the start of the thread of the 1st stitch, then measure to the last one. Everything can be changed later in Settings.',
 fName:'Profile name',fF:'1st stitch (mm)',fL:'Last stitch (mm)',fC:'Number of stitches',fD:'Counting direction',up:'Bottom to top',dn:'Top to bottom',saveNext:'Save and continue',skipS:'Skip this step',
-t3:'Your first measurements',b3:'Enter the string-walk position (in mm) that hits the centre at two distances far apart, for example a short and a long one. You can add more later. The starting example measurements will be removed.',dist:'Distance (m)',pos:'Position (mm)',mes:'Measurement',errC:'Check the stitches and their positions',errP:'Complete distance and position, or leave blank',errD:'Two different distances are needed',ready:'Ready! Good shooting.',gcard:'Glove fingers',gh:'The glove has no stitches: your fingers (1, 2, 3, 4) are the reference marks. Fingers are not all the same size, so measure each one separately. Place the ruler zero before finger 1, then measure in mm (whole numbers) the distance from zero to each finger. Leave unused fingers blank, starting with finger 4.',gdl:'Zero position',gdn:'Zero on the nock side (top)',gdu:'Zero on the opposite side (bottom)',gmin:'Fill in at least fingers 1 and 2.',gneed:'Before you start: measure the distance of each glove finger (fingers 1 and 2 at least). Fingers are not all the same size.',gopen:'Open settings',errG:'Measure at least fingers 1 and 2, from closest to farthest from zero, with no blank finger in between.',adjUpG:'Uphill (mm)',adjDnG:'Downhill (mm)',adjUpS:'Uphill (½ stitch)',adjDnS:'Downhill (½ stitch)',nmS:'− ½ stitch',npS:'+ ½ stitch',nmG:'− 1 mm',npG:'+ 1 mm',
+t3:'Your first measurements',b3:'Enter the string-walk position (in mm) that hits the centre at two distances far apart, for example a short and a long one. You can add more later. The starting example measurements will be removed.',dist:'Distance (m)',pos:'Position (mm)',mes:'Measurement',errC:'Check the stitches and their positions',errP:'Complete distance and position, or leave blank',errD:'Two different distances are needed',ready:'Ready! Good shooting.',dlok:'File downloaded',impq:'Restore this backup ({p} profile(s), {m} measurement(s))? Your current data will be replaced.',impok:'Backup restored',impbad:'Invalid file',nodata:'Nothing to export',pngnote:'Flat preview, no slope.',pngfail:'Export failed',gcard:'Glove fingers',gh:'The glove has no stitches: your fingers (1, 2, 3, 4) are the reference marks. Fingers are not all the same size, so measure each one separately. Place the ruler zero before finger 1, then measure in mm (whole numbers) the distance from zero to each finger. Leave unused fingers blank, starting with finger 4.',gdl:'Zero position',gdn:'Zero on the nock side (top)',gdu:'Zero on the opposite side (bottom)',gmin:'Fill in at least fingers 1 and 2.',gneed:'Before you start: measure the distance of each glove finger (fingers 1 and 2 at least). Fingers are not all the same size.',gopen:'Open settings',errG:'Measure at least fingers 1 and 2, from closest to farthest from zero, with no blank finger in between.',adjUpG:'Uphill (mm)',adjDnG:'Downhill (mm)',adjUpS:'Uphill (½ stitch)',adjDnS:'Downhill (½ stitch)',nmS:'− ½ stitch',npS:'+ ½ stitch',nmG:'− 1 mm',npG:'+ 1 mm',
 gg:[['1. Measure your fingers','The glove has no stitches: your fingers, numbered 1, 2, 3, 4, are the reference marks. As they are not all the same size, measure each one separately. With a rigid ruler, place zero (0 mm) before finger 1, then measure, in mm rounded to the unit, the distance from zero to each finger. Enter them in Settings > Glove fingers.'],['2. Take your reference measurements','On the range, find the position that hits the centre at 2 distances far apart at least (for example 18 m and 30 m), ideally 3 or 4. Measure that position in mm (whole number) with the same zero, or pick the finger from the list, then enter it in the Data tab.'],['3. Use the app','Calc tab: type the distance or tap a chip. The mark is shown as a finger: between zero and finger 1 it is finger 1; between finger 1 and finger 2 it is finger 2; and so on. The position in mm (whole number) is shown small. The {P} tab shows all your distances on the string.']],fProt:'Finger protection',optTab:'Tab',optGlove:'Glove',guide:'User guide',guideL:'How to measure?',gt:'User guide',inst:'Install the app',instd:'App installed on this device',instt:'Install on the home screen',instbar:'Install the app to use it without a network.',instbtn:'Install',
 instA:'Android (Chrome): tap the ⋮ menu at the top right, then “Install app” or “Add to Home screen”.',instI:'iPhone / iPad (Safari): tap the Share button, then “Add to Home Screen”.',instNote:'If the option does not appear, first open the app address with a network in Chrome (Android) or Safari (iPhone), outside private browsing.',
-g:[['What it is for','String walking means moving your finger position on the string according to the target distance. You measure your setting at a few distances, and the app computes the position for every distance in between.'],['1. Measure your stitches','The stitches are the marks on the string. With a rigid ruler, place zero (0 mm) at the start of the thread of the 1st stitch, then read the distance in mm to the start of the thread of the last one. Also note how many there are and the counting direction (1st at the bottom or at the top), then enter these 4 values in Settings > Stitches. Half-stitches are computed for you.'],['2. Take your reference measurements','On the range, find the position that hits the centre at 2 distances far apart at least (for example 18 m and 30 m), ideally 3 or 4 (for example 10, 18, 30 and 40 m). Measure that position in mm from the 1st stitch, as you did for the stitches, or pick the stitch from the list, then enter it in the Data tab. The wider apart your distances, the more reliable the calculation.'],['3. Use the app','Calc tab: type the distance or tap a chip. The stitch to use is shown large (“Stitch 7.5” = halfway between 7 and 8) and the position in mm small. The shooting table lists common distances, and the {P} tab shows all your distances on the string.'],['4. Fine-tune in the field','After a few arrows, tap “Adjust in the field”: say whether they are too high or too low, or shift by half a stitch, then save. The measurement is updated and the curve improves. A warning appears in Data if your points contradict each other.'],['5. Slope','Choose the level (flat, slight, moderate, steep) or enter an estimated height difference in metres, then uphill or downhill: the effective distance is shortened. If your arrows land higher or lower in one direction, correct it in Settings > Slope: adjustment.'],['6. Field mode','Full screen with big buttons to change the distance and slope with one hand. The screen stays on.'],['7. Profiles','Create one profile per bow or arrow set (Settings). Each profile has its own stitches and measurements; switch profiles with the selector at the top of the screen.'],['8. Backup and offline','Back up your measurements as JSON (Data tab): a browser cleanup can erase them. Once installed on the home screen, the app works without a network.']],
+g:[['What it is for','String walking means moving your finger position on the string according to the target distance. You measure your setting at a few distances, and the app computes the position for every distance in between.'],['1. Measure your stitches','The stitches are the marks on the string. With a rigid ruler, place zero (0 mm) at the start of the thread of the 1st stitch, then read the distance in mm to the start of the thread of the last one. Also note how many there are and the counting direction (1st at the bottom or at the top), then enter these 4 values in Settings > Stitches. Half-stitches are computed for you.'],['2. Take your reference measurements','On the range, find the position that hits the centre at 2 distances far apart at least (for example 18 m and 30 m), ideally 3 or 4 (for example 10, 18, 30 and 40 m). Measure that position in mm from the 1st stitch, as you did for the stitches, or pick the stitch from the list, then enter it in the Data tab. The wider apart your distances, the more reliable the calculation.'],['3. Use the app','Calc tab: type the distance or tap a chip. The stitch to use is shown large (“Stitch 7.5” = halfway between 7 and 8) and the position in mm small. The shooting table lists common distances, and the {P} tab shows all your distances on the string.'],['4. Fine-tune in the field','After a few arrows, tap “Adjust in the field”: say whether they are too high or too low, or shift by half a stitch, then save. The measurement is updated and the curve improves. A warning appears in Data if your points contradict each other. Difference: Data is for entering a known position directly; Calibrate starts from the app’s calculation and corrects it.'],['5. Slope','Choose the level (flat, slight, moderate, steep) or enter an estimated height difference in metres, then uphill or downhill: the effective distance is shortened. If your arrows land higher or lower in one direction, correct it in Settings > Slope: adjustment.'],['6. Field mode','Full screen with big buttons to change the distance and slope with one hand. The screen stays on.'],['7. Profiles','Create one profile per bow or arrow set (Settings). Each profile has its own stitches and measurements; switch profiles with the selector at the top of the screen.'],['8. Backup and offline','Back up your measurements as JSON (Data tab): a browser cleanup can erase them. Once installed on the home screen, the app works without a network.']],
 t4:'Getting started',tips:['Calc: enter the distance, read the stitch to set.','After each shot, use “Adjust in the field”: the curve gets sharper.','Slope: choose the level, then uphill or downhill.','Offline: open the app once with a network, then it works without.','This help stays available in Settings.'],done:'Finish',
 help:'Help and information',ver:'Version',again:'Replay the introduction',legal:'Warnings and legal notice',check:'Check for updates',newv:'Update available',doupd:'Update now',later:'Later',updtxt:'Version {n} is available (you have {o}). Your measurements and settings are kept.',uptodate:'App is up to date',upfail:'Check failed (offline?)',close:'Close',
 lt:'Notice and warnings',ed:'Publisher and hosting',author:'Author / publisher',contact:'Contact',host:'Host',
@@ -894,7 +931,7 @@ refresh('calc');
 ['Position retenue (mm)','Chosen position (mm)'],['Enregistrer la correction','Save correction'],
 ['Nouvelle mesure','New measurement'],['— choisir —','— choose —'],['Enregistrer','Save'],
 ['Courbe et cohérence','Curve and consistency'],['Distances conseillées pour calibrer','Suggested distances to calibrate'],
-['Mesures du profil','Profile measurements'],['Copier en CSV','Copy as CSV'],['Sauvegarder (JSON)','Back up (JSON)'],['Restaurer (JSON)','Restore (JSON)'],
+['Mesures du profil','Profile measurements'],['Télécharger en CSV','Download as CSV'],['Sauvegarder (fichier)','Back up (file)'],['Restaurer (fichier)','Restore (file)'],['Exporter en image (PNG)','Export as image (PNG)'],['Affinez une distance à partir du calcul de l’appli : indiquez où vont vos flèches ou décalez d’un pas, puis enregistrez. Cela met à jour la mesure de cette distance.','Fine-tune a distance starting from the app’s calculation: say where your arrows go or shift by one step, then save. This updates the measurement for that distance.'],['Saisissez ici une position que vous connaissez pour une distance (par exemple réglée et validée au tir). Ces mesures sont la base de la courbe.','Enter here a position you know for a distance (for example set and checked by shooting). These measurements are the basis of the curve.'],
 ['Palette — aperçu des distances','Tab — distances overview'],['Afficher','Show'],['Mes distances mesurées','My measured distances'],['Toutes les 5 m','Every 5 m'],
 ['Le repère (couture) est en gros, la position en mm en petit. Aperçu à plat, sans pente.','The mark (stitch) is large, the position in mm is small. Flat preview, without slope.'],
 ['Mode hors ligne','Offline mode'],['Vérification…','Checking…'],
