@@ -118,12 +118,3 @@ Première version numérotée, avec l'ensemble des fonctions suivantes.
 - **Mises à jour** : vérification de `version.json`, popup avec les nouveautés (fermable pour ignorer), bouton de vérification manuelle.
 
 ---
-
-## Idées pour les prochaines versions
-
-- Niveaux de pente réglables par profil.
-- Historique des calibrations (date, note, annulation de la dernière correction).
-- Fiche de tir à imprimer en PDF.
-- Pente apprise à partir des calibrations en montée et en descente.
-- Mode terrain verrouillable contre les appuis accidentels.
-- Lien avec le carnet de tir nature (repère affiché pour la distance de chaque cible).
