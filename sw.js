@@ -1,5 +1,5 @@
 /* Stringwalker — service worker : fonctionnement 100 % hors ligne */
-const C='stringwalker-v6',F=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon-maskable-512.png','./apple-touch-icon.png'];
+const C='stringwalker-v7',F=['./','./index.html','./styles.css','./app.js','./lang.js','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon-maskable-512.png','./apple-touch-icon.png'];
 self.addEventListener('install',e=>{
   /* chaque fichier est mis en cache séparément : un manquant ne bloque pas l'installation */
   e.waitUntil(caches.open(C).then(c=>Promise.all(F.map(u=>c.add(u).catch(()=>{})))));

@@ -4,9 +4,21 @@ Calculateur de pianotage (string walking) pour l'arc barebow : palette ou gant, 
 Ancien nom : *Barebow Pianotage*.
 
 Ce fichier suit le principe de [Keep a Changelog](https://keepachangelog.com/fr/) et le numéro de version `majeur.mineur.correctif`.
-Pour publier une version : changer le numéro dans `index.html` (ligne `const INFO={version:…}`) **et** dans `version.json`, y ajouter les nouveautés (`notes`, en français et en anglais), puis redéployer. Les appareils qui ont une version plus ancienne affichent alors le popup de mise à jour.
+Pour publier une version : changer le numéro dans `app.js` (ligne `const INFO={version:…}`) **et** dans `version.json`, y ajouter les nouveautés (`notes`, en français et en anglais), puis redéployer. Les appareils qui ont une version plus ancienne affichent alors le popup de mise à jour.
 
 Licence : CC BY-NC 4.0 (voir `LICENCE.txt`).
+
+---
+
+## [1.7.1] — 2026-11-04
+
+### Modifié
+- **Refactoring interne, sans changement fonctionnel** : le CSS et le JavaScript sont sortis d'`index.html` vers des fichiers séparés (`styles.css`, `app.js`, `lang.js`). `index.html` passe d'environ 100 Ko à environ 5 Ko, ce qui facilite la relecture, les contributions et la maintenance.
+- **CI GitHub Actions** (`.github/workflows/ci.yml`) : vérifie la syntaxe JavaScript, la validité des fichiers JSON, la présence des fichiers référencés par `index.html` et la cohérence du cache du service worker.
+- **Service worker** : cache passé en `stringwalker-v7` pour inclure les nouveaux fichiers.
+
+### Corrigé
+- Sur petits écrans (≤ 420 px), le placeholder du champ dénivelé (« Ou dénivelé estimé cible ↔ pas de tir (m) ») était rogné à droite : sa taille de police est réduite sur ces largeurs.
 
 ---
 

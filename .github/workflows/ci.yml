@@ -1,0 +1,59 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Vérifier la syntaxe JavaScript
+        run: |
+          set -e
+          for f in app.js lang.js sw.js; do
+            node --check "$f"
+            echo "OK: $f"
+          done
+
+      - name: Vérifier les fichiers JSON
+        run: |
+          set -e
+          for f in manifest.webmanifest version.json; do
+            node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))"
+            echo "OK: $f"
+          done
+
+      - name: Vérifier que les ressources locales référencées existent
+        run: |
+          set -e
+          node - <<'EOF'
+          const fs = require('fs');
+          const html = fs.readFileSync('index.html', 'utf8');
+          const refs = [...html.matchAll(/(?:href|src)="([^"#][^"]*)"/g)].map(m => m[1])
+            .filter(u => !/^(https?:|data:|\/\/|#)/.test(u) && !u.startsWith('mailto:'));
+          let fail = 0;
+          for (const r of refs) {
+            if (!fs.existsSync(r)) { console.error('MANQUANT : ' + r); fail++; }
+          }
+          if (fail) { process.exit(1); }
+          console.log('OK : ' + refs.length + ' références locales résolues');
+          EOF
+
+      - name: Vérifier le cache du service worker
+        run: |
+          set -e
+          node - <<'EOF'
+          const fs = require('fs');
+          const sw = fs.readFileSync('sw.js', 'utf8');
+          const files = sw.match(/F=\[(.*?)\]/)[1].match(/'\.\/[^']*'/g).map(s => s.slice(1, -1));
+          let fail = 0;
+          for (const f of files) {
+            const p = f === './' ? 'index.html' : f.replace('./', '');
+            if (!fs.existsSync(p)) { console.error('DANS LE CACHE SW MAIS ABSENT : ' + f); fail++; }
+          }
+          if (fail) { process.exit(1); }
+          console.log('OK : ' + files.length + ' entrées du cache présentes sur le disque');
+          EOF
