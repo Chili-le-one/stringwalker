@@ -1,0 +1,19 @@
+{
+  "name": "stringwalker",
+  "version": "1.7.2",
+  "private": true,
+  "description": "Calculateur de pianotage (string walking) pour l'arc barebow — PWA hors ligne",
+  "license": "CC-BY-NC-4.0",
+  "type": "commonjs",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.14.0",
+    "globals": "^17.14.0",
+    "vitest": "^4.1.12"
+  }
+}

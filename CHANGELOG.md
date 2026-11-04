@@ -10,6 +10,25 @@ Licence : CC BY-NC 4.0 (voir `LICENCE.txt`).
 
 ---
 
+## [1.7.2] — 2026-11-04
+
+### Ajouté
+- **Tests unitaires (Vitest)** : la logique de calcul (interpolation linéaire, courbe monotone de Fritsch–Carlson, polynôme par moindres carrés, extrapolation, cas limites) est extraite dans un module pur `calc.js`, couvert par 15 tests (`tests/calc.test.js`). L'application en ligne ne change pas : les tests ne s'exécutent que dans la CI.
+- **ESLint** avec une configuration adaptée au style compact du projet (`eslint.config.mjs`) : vérifie les erreurs réelles sans reformater le code.
+- **CI étendue** : elle lance maintenant les tests unitaires et le lint en plus des vérifications existantes.
+
+### Modifié
+- **Accessibilité** : les libellés visibles des champs sont maintenant liés programmatiquement (attribut `for`), le champ dénivelé et le sélecteur de langue ont un libellé accessible (`aria-label`). Aucun changement visuel.
+- **Contraste** : la couleur des textes secondaires du thème clair passe de #6f7178 à #65676e (4,32 → 5,0:1 sur le fond) pour respecter le niveau AA du WCAG. Changement à peine perceptible ; le thème sombre passait déjà.
+- **Logo** : l'image intégrée en base64 dans `index.html` devient un fichier séparé `logo.png` aux octets identiques — même apparence, `index.html` plus léger.
+- **Service worker** : cache passé en `stringwalker-v8` pour inclure `calc.js` et `logo.png`.
+
+### Inchangé (engagements conservés)
+- **100 % hors ligne** : vérifié — rechargement sans réseau, calcul et navigation entre les onglets fonctionnent sans erreur.
+- **Aucune donnée envoyée ou reçue** : vérifié — les seules requêtes réseau sont le chargement des fichiers de l'application et la vérification de version (`version.json`), sans aucune donnée personnelle.
+
+---
+
 ## [1.7.1] — 2026-11-04
 
 ### Modifié

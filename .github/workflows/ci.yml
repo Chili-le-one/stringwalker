@@ -10,10 +10,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Tests unitaires (Vitest)
+        run: npm test
+
+      - name: Lint (ESLint)
+        run: npm run lint
+
       - name: Vérifier la syntaxe JavaScript
         run: |
           set -e
-          for f in app.js lang.js sw.js; do
+          for f in app.js calc.js lang.js sw.js; do
             node --check "$f"
             echo "OK: $f"
           done

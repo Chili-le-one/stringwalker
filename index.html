@@ -17,7 +17,7 @@
 </head>
 <body>
 <header>
-  <h1><img class="logo" alt="" src="data:image/png;base64,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">String<span>walker</span></h1>
+  <h1><img class="logo" alt="" src="logo.png">String<span>walker</span></h1>
   <select id="profSel" onchange="setActive(this.value)" aria-label="Profil de matériel"></select>
 </header>
 <div id="instBar"></div>
@@ -26,11 +26,11 @@
   <div class="card">
     <h2>Calcul de volée</h2>
     <div id="gNeed" class="help" style="display:none"></div>
-    <div class="fg"><label>Distance (m)</label><input type="number" id="calcDist" step="any" inputmode="decimal" placeholder="ex : 30" oninput="calculate()"></div>
+    <div class="fg"><label for="calcDist">Distance (m)</label><input type="number" id="calcDist" step="any" inputmode="decimal" placeholder="ex : 30" oninput="calculate()"></div>
     <div class="fg"><label>Pente du poste (montée ou descente)</label><div id="slopeChips" class="chips"></div>
       <div id="dirChips" class="chips"></div>
       <input type="hidden" id="calcSlope" value="0"><input type="hidden" id="calcDir" value="up">
-      <input type="number" id="calcH" step="any" inputmode="decimal" placeholder="Ou dénivelé estimé cible ↔ pas de tir (m)" oninput="calculate();slopeChips()" style="margin-top:6px">
+      <input type="number" id="calcH" step="any" inputmode="decimal" placeholder="Ou dénivelé estimé cible ↔ pas de tir (m)" aria-label="Ou dénivelé estimé cible (m)" oninput="calculate();slopeChips()" style="margin-top:6px">
       <div style="font-size:.72rem;color:var(--muted);margin-top:6px;line-height:1.4">Faible ≈ 10° · Moyenne ≈ 20° · Forte ≈ 30°. Le dénivelé (en m), s’il est rempli, remplace le niveau choisi.</div></div>
     <div id="chips" class="chips"></div>
     <div class="result">
@@ -54,9 +54,9 @@
   <div class="card">
     <h2>Ajustement terrain</h2>
     <div class="help">Affinez une distance à partir du calcul de l’appli : indiquez où vont vos flèches ou décalez d’un pas, puis enregistrez. Cela met à jour la mesure de cette distance.</div>
-    <div class="fg"><label>Distance de tir (m)</label><input type="number" id="cDist" step="any" inputmode="decimal" placeholder="ex : 30" oninput="calibInit()"></div>
+    <div class="fg"><label for="cDist">Distance de tir (m)</label><input type="number" id="cDist" step="any" inputmode="decimal" placeholder="ex : 30" oninput="calibInit()"></div>
     <div class="fg"><label>Valeur théorique</label><div id="cTheo" style="font-family:var(--serif);color:var(--accent);font-size:1.1rem">— mm</div></div>
-    <div class="fg"><label>Où vont les flèches ?</label>
+    <div class="fg"><label for="cObs">Où vont les flèches ?</label>
       <select id="cObs" onchange="autoAdj()">
         <option value="centre">Au centre</option>
         <option value="haut">Trop haut — descendre le pianotage</option>
@@ -64,7 +64,7 @@
       </select></div>
     <label>Affiner</label>
     <div class="stepper"><button onclick="nudge(-1)">− ½ couture</button><button onclick="nudge(1)">+ ½ couture</button></div>
-    <div class="fg"><label>Position retenue (mm)</label><input type="number" id="cMm" step="1" inputmode="numeric" oninput="calMark()"><div id="cMk" class="d" style="font-size:.78rem;color:var(--muted);margin-top:6px"></div></div>
+    <div class="fg"><label for="cMm">Position retenue (mm)</label><input type="number" id="cMm" step="1" inputmode="numeric" oninput="calMark()"><div id="cMk" class="d" style="font-size:.78rem;color:var(--muted);margin-top:6px"></div></div>
     <svg id="palCal" class="pal" viewBox="0 0 300 250" aria-label="Schéma de la palette"></svg>
     <button class="btn" style="margin-top:14px" onclick="saveCal()">Enregistrer la correction</button>
   </div>
@@ -75,10 +75,10 @@
     <div class="help">Saisissez ici une position que vous connaissez pour une distance (par exemple réglée et validée au tir). Ces mesures sont la base de la courbe.</div>
     <form onsubmit="saveMeas(event)">
       <div class="row">
-        <div class="fg"><label>Distance (m)</label><input type="number" id="mDist" step="any" inputmode="decimal" required></div>
-        <div class="fg"><label>Position (mm)</label><input type="number" id="mMm" step="1" inputmode="numeric" required></div>
+        <div class="fg"><label for="mDist">Distance (m)</label><input type="number" id="mDist" step="any" inputmode="decimal" required></div>
+        <div class="fg"><label for="mMm">Position (mm)</label><input type="number" id="mMm" step="1" inputmode="numeric" required></div>
       </div>
-      <div class="fg"><label>Repère</label><select id="mMk" onchange="if(this.value)mMm.value=this.value"><option value="">— choisir —</option></select></div>
+      <div class="fg"><label for="mMk">Repère</label><select id="mMk" onchange="if(this.value)mMm.value=this.value"><option value="">— choisir —</option></select></div>
       <button class="btn" type="submit">Enregistrer</button>
     </form>
   </div>
@@ -99,7 +99,7 @@
 
 <div id="v-pal" class="view">
   <div class="card"><h2>Palette — aperçu des distances</h2>
-    <div class="fg"><label>Afficher</label><select id="ovAll" onchange="drawOverview()"><option value="meas">Mes distances mesurées</option><option value="all">Toutes les 5 m</option></select></div>
+    <div class="fg"><label for="ovAll">Afficher</label><select id="ovAll" onchange="drawOverview()"><option value="meas">Mes distances mesurées</option><option value="all">Toutes les 5 m</option></select></div>
     <svg id="palOv" class="pal" viewBox="0 0 300 480" aria-label="Distances sur la palette"></svg>
     <button class="btn sec" style="margin-top:12px" onclick="exportOverviewPNG()">Exporter en image (PNG)</button>
     <div class="help" style="margin:14px 0 0">Le repère (couture) est en gros, la position en mm en petit. Aperçu à plat, sans pente.</div>
@@ -107,32 +107,32 @@
 </div>
 
 <div id="v-cfg" class="view">
-  <div class="card"><h2>Langue / Language</h2><select id="langSel" onchange="setLang(this.value)"><option value="fr">Français</option><option value="en">English</option></select></div>
+  <div class="card"><h2>Langue / Language</h2><select id="langSel" aria-label="Langue" onchange="setLang(this.value)"><option value="fr">Français</option><option value="en">English</option></select></div>
   <div class="card" id="helpCard"></div>
   <div class="card"><h2>Mode hors ligne</h2><div id="offStat" class="help" style="margin:0">Vérification…</div></div>
   <div class="card"><h2>Profil de matériel</h2>
-    <div class="fg"><label>Nom du profil</label><input id="pName" onchange="renameProf()" placeholder="ex : Arc 38 lb — flèches carbone"></div>
-    <div class="fg"><label>Protection des doigts</label><select id="pProt" onchange="saveProt()"><option value="tab">Palette</option><option value="glove">Gant</option></select></div>
+    <div class="fg"><label for="pName">Nom du profil</label><input id="pName" onchange="renameProf()" placeholder="ex : Arc 38 lb — flèches carbone"></div>
+    <div class="fg"><label for="pProt">Protection des doigts</label><select id="pProt" onchange="saveProt()"><option value="tab">Palette</option><option value="glove">Gant</option></select></div>
     <div class="row"><button class="btn sec" onclick="newProf()">Nouveau</button><button class="btn sec" onclick="dupProf()">Dupliquer</button><button class="btn sec dng" onclick="delProf()">Supprimer</button></div>
   </div>
   <div class="card"><h2>Calcul</h2>
-    <div class="fg"><label>Interpolation</label>
+    <div class="fg"><label for="cfgM">Interpolation</label>
       <select id="cfgM" onchange="saveCfg()"><option value="poly">Polynôme (courbe lissée)</option><option value="curve">Courbe (monotone)</option><option value="linear">Linéaire</option></select></div>
-    <div class="fg"><label>Degré du polynôme</label><select id="cfgDeg" onchange="saveCfg()"><option value="auto">Automatique</option><option value="1">1 (droite)</option><option value="2">2 (parabole)</option><option value="3">3 (cubique)</option></select></div>
+    <div class="fg"><label for="cfgDeg">Degré du polynôme</label><select id="cfgDeg" onchange="saveCfg()"><option value="auto">Automatique</option><option value="1">1 (droite)</option><option value="2">2 (parabole)</option><option value="3">3 (cubique)</option></select></div>
     <div class="help">Polynôme : une courbe lisse « théorique » ajustée à l’ensemble de vos mesures (recommandé). Elle peut s’écarter un peu de chaque mesure : l’écart est visible dans le graphique et dans l’onglet Mesures. « Courbe monotone » passe exactement par vos mesures ; « Linéaire » les relie par des droites.</div>
   </div>
   <div class="card"><h2>Pente : ajustement</h2>
     <div class="help">Par défaut, montée et descente donnent la même distance utile (la géométrie est symétrique). Si vos flèches partent plus haut ou plus bas dans un sens, corrigez ici en demi-coutures (positif = monter le pianotage). Appliqué dès que la pente n’est pas « Plat ».</div>
-    <div class="row"><div class="fg"><label>Montée (½ couture)</label><input type="number" id="cfgU" step="any" inputmode="decimal" onchange="saveCfg()"></div><div class="fg"><label>Descente (½ couture)</label><input type="number" id="cfgDn" step="any" inputmode="decimal" onchange="saveCfg()"></div></div>
+    <div class="row"><div class="fg"><label for="cfgU">Montée (½ couture)</label><input type="number" id="cfgU" step="any" inputmode="decimal" onchange="saveCfg()"></div><div class="fg"><label for="cfgDn">Descente (½ couture)</label><input type="number" id="cfgDn" step="any" inputmode="decimal" onchange="saveCfg()"></div></div>
   </div>
   <div class="card" id="cardGlove" style="display:none"></div>
   <div class="card" id="cardStitch"><h2>Coutures</h2>
     <div class="help">Posez le zéro de la règle au début du fil de la première couture, puis mesurez jusqu'au début du fil de la dernière.</div>
-    <div class="fg"><label>Sens de comptage</label>
+    <div class="fg"><label for="cfgD">Sens de comptage</label>
       <select id="cfgD" onchange="saveCfg()"><option value="up">Du bas vers le haut</option><option value="down">Du haut vers le bas</option></select></div>
-    <div class="fg"><label>1ère couture (mm)</label><input type="number" id="cfgF" step="1" inputmode="numeric" onchange="saveCfg()"></div>
-    <div class="fg"><label>Dernière couture (mm)</label><input type="number" id="cfgL" step="1" inputmode="numeric" onchange="saveCfg()"></div>
-    <div class="fg"><label>Nombre de coutures</label><input type="number" id="cfgC" inputmode="numeric" onchange="saveCfg()"></div>
+    <div class="fg"><label for="cfgF">1ère couture (mm)</label><input type="number" id="cfgF" step="1" inputmode="numeric" onchange="saveCfg()"></div>
+    <div class="fg"><label for="cfgL">Dernière couture (mm)</label><input type="number" id="cfgL" step="1" inputmode="numeric" onchange="saveCfg()"></div>
+    <div class="fg"><label for="cfgC">Nombre de coutures</label><input type="number" id="cfgC" inputmode="numeric" onchange="saveCfg()"></div>
     <div id="cfgP" style="font-size:.8rem;color:var(--accent)"></div>
     <svg id="palCfg" class="pal" viewBox="0 0 300 250" style="margin-top:12px"></svg>
   </div>
@@ -158,6 +158,7 @@
 </nav>
 <div id="toast"></div>
 
+<script src="calc.js"></script>
 <script src="app.js"></script>
 <script src="lang.js"></script>
 </body>
